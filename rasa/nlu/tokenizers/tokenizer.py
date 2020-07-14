@@ -5,7 +5,14 @@ from typing import Text, List, Optional, Dict, Any
 from rasa.nlu.config import RasaNLUModelConfig
 from rasa.nlu.training_data import TrainingData, Message
 from rasa.nlu.components import Component
-from rasa.nlu.constants import TEXT, TOKENS_NAMES, MESSAGE_ATTRIBUTES, INTENT, ACTION_TEXT, MESSAGE_ACTION_NAME
+from rasa.nlu.constants import (
+    TEXT,
+    TOKENS_NAMES,
+    MESSAGE_ATTRIBUTES,
+    INTENT,
+    ACTION_TEXT,
+    MESSAGE_ACTION_NAME,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +91,7 @@ class Tokenizer(Component):
                 if example.get(attribute):
                     if attribute == INTENT:
                         tokens = self._split_intent(example)
-                    elif attribute == MESSAGE_ACTION_NAME: 
+                    elif attribute == MESSAGE_ACTION_NAME:
                         # when we have text action, the text will be stored both in `action_name` and in `text`;
                         # we need to check if the text is empty to make sure that it is actually the `action_name`
                         if not example.get(ACTION_TEXT):
@@ -101,7 +108,7 @@ class Tokenizer(Component):
         if message.get(attribute):
             if attribute == INTENT:
                 tokens = self._split_intent(message)
-            elif attribute == MESSAGE_ACTION_NAME: 
+            elif attribute == MESSAGE_ACTION_NAME:
                 # when we have text action, the text will be stored both in `action_name` and in `text`;
                 # we need to check if the text is empty to make sure that it is actually the `action_name`
                 if not message.get(ACTION_TEXT):
@@ -132,9 +139,7 @@ class Tokenizer(Component):
             # during processing we store action name in text field
             text = message.get(TEXT)
         # TODO: Do we want a separate `action_split_symbol` or same as intent?
-        words = (
-            text.split(self.intent_split_symbol)
-        )
+        words = text.split(self.intent_split_symbol)
 
         return self._convert_words_to_tokens(words, text)
 
