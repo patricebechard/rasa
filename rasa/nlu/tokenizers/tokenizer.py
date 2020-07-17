@@ -10,8 +10,6 @@ from rasa.nlu.constants import (
     TOKENS_NAMES,
     MESSAGE_ATTRIBUTES,
     INTENT,
-    ACTION_TEXT,
-    MESSAGE_ACTION_NAME,
     NAME_ATTRIBUTES,
 )
 
