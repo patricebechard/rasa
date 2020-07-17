@@ -4,7 +4,7 @@ from rasa.nlu.constants import (
     TOKENS_NAMES,
     TEXT,
     INTENT,
-    MESSAGE_ACTION_NAME,
+    ACTION_NAME,
     ACTION_TEXT,
 )
 from rasa.nlu.training_data import TrainingData, Message
@@ -147,7 +147,7 @@ def test_whitespace_training(supervised_embeddings_config):
         Message(
             "Where are you going?",
             {
-                MESSAGE_ACTION_NAME: "Where are you going?",
+                ACTION_NAME: "Where are you going?",
                 ACTION_TEXT: "Where are you going?",
             },
         ),
@@ -166,8 +166,8 @@ def test_whitespace_training(supervised_embeddings_config):
     assert examples[1].data.get(TOKENS_NAMES[TEXT])[0].text == "i"
     assert examples[1].data.get(TOKENS_NAMES[TEXT])[1].text == "want"
     assert examples[1].data.get(TOKENS_NAMES[TEXT])[2].text == "tacos"
-    assert examples[2].data.get(TOKENS_NAMES[MESSAGE_ACTION_NAME])[0].text == "action"
-    assert examples[2].data.get(TOKENS_NAMES[MESSAGE_ACTION_NAME])[1].text == "restart"
+    assert examples[2].data.get(TOKENS_NAMES[ACTION_NAME])[0].text == "action"
+    assert examples[2].data.get(TOKENS_NAMES[ACTION_NAME])[1].text == "restart"
     assert examples[2].data.get(TOKENS_NAMES[TEXT])[0].text == "action_restart"
     assert examples[2].data.get(TOKENS_NAMES[ACTION_TEXT]) is None
     assert examples[3].data.get(TOKENS_NAMES[ACTION_TEXT])[0].text == "where"
@@ -200,7 +200,7 @@ def test_whitespace_processing_with_attribute(supervised_embeddings_config):
     message = Message(
         "Where are you going?",
         {
-            MESSAGE_ACTION_NAME: "Where are you going?",
+            ACTION_NAME: "Where are you going?",
             ACTION_TEXT: "Where are you going?",
         },
     )
