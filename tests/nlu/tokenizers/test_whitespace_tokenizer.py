@@ -146,10 +146,7 @@ def test_whitespace_training(supervised_embeddings_config):
         Message("action_restart", {"action_name": "action_restart"},),
         Message(
             "Where are you going?",
-            {
-                ACTION_NAME: "Where are you going?",
-                ACTION_TEXT: "Where are you going?",
-            },
+            {ACTION_NAME: "Where are you going?", ACTION_TEXT: "Where are you going?",},
         ),
     ]
 
@@ -199,10 +196,7 @@ def test_whitespace_processing_with_attribute(supervised_embeddings_config):
 
     message = Message(
         "Where are you going?",
-        {
-            ACTION_NAME: "Where are you going?",
-            ACTION_TEXT: "Where are you going?",
-        },
+        {ACTION_NAME: "Where are you going?", ACTION_TEXT: "Where are you going?",},
     )
     expected_action_tokens_text = ["where", "are", "you", "going"]
     component_config = {"case_sensitive": False}
