@@ -10,7 +10,7 @@ from rasa.nlu.constants import (
     TOKENS_NAMES,
     MESSAGE_ATTRIBUTES,
     INTENT,
-    NAME_ATTRIBUTES,
+    ACTION_NAME,
 )
 
 logger = logging.getLogger(__name__)
@@ -91,7 +91,7 @@ class Tokenizer(Component):
                     example.get(attribute) is not None
                     and not example.get(attribute) == ""
                 ):
-                    if attribute in NAME_ATTRIBUTES:
+                    if attribute in [INTENT, ACTION_NAME]:
                         tokens = self._split_name(example, attribute)
                     else:
                         tokens = self.tokenize(example, attribute)
@@ -100,7 +100,7 @@ class Tokenizer(Component):
     def process(self, message: Message, attribute: Text = TEXT, **kwargs: Any) -> None:
         """Tokenize the incoming message."""
         if message.get(attribute):
-            if attribute in NAME_ATTRIBUTES:
+            if attribute in [INTENT, ACTION_NAME]:
                 tokens = self._split_name(message, attribute)
             else:
                 tokens = self.tokenize(message, attribute)
