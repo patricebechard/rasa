@@ -372,7 +372,7 @@ It is recommended to use ``state_featurizer=LabelTokenizerSingleStateFeaturizer(
 Rule Policy
 ^^^^^^^^^^^
 
-The ``RulePolicy`` is a policy which handles conversation parts which should follow
+The ``RulePolicy`` is a policy that handles conversation parts that follow
 a fixed behavior. Please see :ref:`rules` for further information.
 
 Memoization Policy
