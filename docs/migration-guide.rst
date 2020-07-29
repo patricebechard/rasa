@@ -37,7 +37,7 @@ General
 RulePolicy
 ~~~~~~~~~~
 
-With the introduction of :ref:`rules` the following policies were deprecated:
+With the introduction of :ref:`rules`, the following policies are deprecated:
 
 - :ref:`mapping-policy`
 - :ref:`fallback-policy`
@@ -59,14 +59,13 @@ mapped an intent ``ask_is_bot`` as follows:
      - ask_is_bot:
          triggers: action_is_bot
 
-This would become the following rule:
+This becomes the following rule:
 
 .. code-block:: yaml
 
     rules:
         rule: Rule to map `ask_is_bot` intent
         steps:
-        - ...
         - intent: ask_is_bot
         - action: action_is_bot
 
@@ -75,7 +74,7 @@ This would become the following rule:
 Migrating from the Fallback Policy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you previously used the :ref:`fallback-policy`, then the following model
+If you previously used the :ref:`fallback-policy`, the following model
 configuration would translate as follows given a previous configuration like this:
 
 .. code-block:: yaml
@@ -103,7 +102,7 @@ The new configuration would then look like:
         threshold: 0.4
         ambiguity_threshold: 0.1
 
-In addition you need to add a :ref:`rule<rules>` to specify which action to run in case
+In addition, you need to add a :ref:`rule<rules>` to specify which action to run in case
 of low NLU confidence:
 
 .. code-block:: yaml
@@ -112,7 +111,6 @@ of low NLU confidence:
 
     - rule: Ask the user to rephrase whenever they send a message with low NLU confidence
       steps:
-      - ...
       - intent: nlu_fallback
       - action: utter_please_rephrase
 
@@ -123,7 +121,7 @@ Please see the :ref:`fallback-actions` documentation for more information.
 Migrating from the Two-Stage-Fallback Policy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you previously used the :ref:`two-stage-fallback-policy`, then the following model
+If you previously used the :ref:`two-stage-fallback-policy`, the following model
 configuration would translate as follows given a previous configuration like this:
 
     .. code-block:: yaml
@@ -153,14 +151,13 @@ The new configuration would then look like:
         threshold: 0.4
         ambiguity_threshold: 0.1
 
-In addition you need to add a :ref:`rule<rules>` to activate the Two-Stage Fallback for
+In addition, you need to add a :ref:`rule<rules>` to activate the Two-Stage Fallback for
 messages with low NLU confidence.
 
 .. code-block:: yaml
 
     - rule: Implementation of the TwoStageFallbackPolicy
       steps:
-      - ...
       # This intent is automatically triggered by the `FallbackClassifier` in the NLU
       # pipeline in case the intent confidence was below the specified threshold.
       - intent: nlu_fallback
@@ -177,8 +174,8 @@ Please see the :ref:`fallback-actions` documentation for more information.
 FormPolicy
 ~~~~~~~~~~
 
-As of Rasa Open Source 2.0 the logic for :ref:`forms` was moved from the Rasa SDK
-to Rasa Open Source to ease implementations of custom action libraries. This mean that
+As of Rasa Open Source 2.0, the logic for :ref:`forms` has been moved from the Rasa SDK
+to Rasa Open Source to simplify implementations of custom action libraries. This means
 you no longer need to use the ``FormAction`` when implementing custom actions with the
 Python SDK. Instead you can use a regular ``Action`` to validate and request slots.
 
@@ -265,10 +262,10 @@ form.
 .. code-block:: yaml
 
     - rule: Submit form
-      steps:
+      condition:
       # Condition that form is active.
       - form: restaurant_form
-      - ...
+      steps:
       - action: restaurant_form
       - form: null
       - slot: requested_slot
