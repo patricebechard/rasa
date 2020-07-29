@@ -825,8 +825,8 @@ DIETClassifier
 FallbackClassifier
 ~~~~~~~~~~~~~~~~~~
 
-:Short: Classifies a message with an intent ``nlu_fallback`` if the NLU intent
-    classification scores were ambiguous.
+:Short: Classifies a message with the intent ``nlu_fallback`` if the NLU intent
+    classification scores are ambiguous.
 :Outputs: ``entities``, ``intent`` and ``intent_ranking``
 :Requires: ``intent`` and``intent_ranking`` output from a previous
     :ref:`intent classifier<intent-classifier>`
@@ -857,10 +857,10 @@ FallbackClassifier
         }
 
 :Description:
-    The ``FallbackClassifier`` classifies a user message with an intent ``nlu_fallback``
+    The ``FallbackClassifier`` classifies a user message with the intent ``nlu_fallback``
     in case the previous :ref:`intent-classifier` wasn't able to classify an intent
     with a confidence greater or equal than the ``threshold`` of the
-    ``FallbackClassifier``. In addition it can also predict the fallback intent in case
+    ``FallbackClassifier``. It can also predict the fallback intent in the case when
     the confidence scores of the two top ranked intents are closer than the the
     ``ambiguity_threshold``.
 
@@ -874,7 +874,6 @@ FallbackClassifier
 
         - rule: Ask the user to rephrase in case of low NLU confidence
           steps:
-          - ...
           - intent: nlu_fallback
           - action: utter_please_rephrase
 
