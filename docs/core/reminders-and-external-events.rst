@@ -61,7 +61,6 @@ by writing a :ref:`rule<rules>` for it:
 
     - rule: Trigger `action_react_to_reminder` for `EXTERNAL_reminder`
       steps:
-      - ...
       - intent: EXTERNAL_reminder
       - action: action_react_to_reminder
 
@@ -147,7 +146,6 @@ In addition, we also declare an intent ``ask_id``, define some NLU data for it, 
 
     - rule: Trigger `action_tell_id` whenever there is the intent `ask_id`
       steps:
-      - ...
       - intent: ask_id
       - action: action_tell_id
 
