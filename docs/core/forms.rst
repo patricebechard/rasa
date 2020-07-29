@@ -49,23 +49,22 @@ The following example of a form ``your_form`` will fill only one slot
       - type: from_entity
         entity: age
 
-Once the form action gets called for the first time, the form gets activated and it will
-start asking the user for the next slot which is not yet filled. It does this by
+Once the form action gets called for the first time, the form gets activated and will
+prompt the user for the next required slot value. It does this by
 looking for a :ref:`response<responses>` called ``utter_ask_{slot_name}``. Make sure
 to define these responses in your domain file for each required slot.
 
 Activating a Form
 ~~~~~~~~~~~~~~~~~
 
-To activate a form you need to add a :ref:`story<stories>` or :ref:`rule<rules>`
-which describes when the assistant should run the form. In case a certain intent
-triggers a form you can for example use the following rule:
+To activate a form you need to add a :ref:`story<stories>` or :ref:`rule<rules>`,
+which describes when the assistant should run the form. In the case of a specific intent
+triggering a form, you can use the following rule:
 
 .. code-block:: yaml
 
     - rule: Activate form
       steps:
-      - ...
       - intent: intent_which_activates_form
       - action: your_form
       - form: your_form
@@ -80,19 +79,19 @@ Deactivating a Form
 
 A form will automatically deactivate itself once all required slots are filled.
 You can describe your assistant's behavior for the end of a form with a rule or a story.
-If you don't add an applicable story or rule, the assistant will listen for the next
-user message after the form is finished.
+If you don't add an applicable story or rule, the assistant will automatically listen 
+for the nextuser message after the form is finished.
 The following example runs the utterance ``utter_all_slots_filled`` as soon as the form
 ``your_form`` filled all required slots.
 
 .. code-block:: yaml
 
     - rule: Submit form
-      steps:
+      condition: 
       # Condition that form is active.
       - form: your_form
-      - ...
-      # Condition that form was deactivated
+      steps:
+      # Form is deactivated
       - action: your_form
       - form: null
       - slot: requested_slot
@@ -100,7 +99,7 @@ The following example runs the utterance ``utter_all_slots_filled`` as soon as t
       # The action we want to run when the form is submitted.
       - action: utter_all_slots_filled
 
-Users might want to break out of a form early. Please :ref:`section_unhappy` how to
+Users might want to break out of a form early. Please :ref:`section_unhappy` on how to
 write stories or rules for this case.
 
 .. _forms-slot-mappings:
@@ -116,9 +115,11 @@ from_entity
 ^^^^^^^^^^^
 
 The ``from_entity`` mapping fills slots based on extracted entities.
-It will look for an entity called ``entity_name`` to fill a slot ``slot_name``
-regardless of user intent if ``intent_name`` is ``None`` else only if the users intent
-is ``intent_name``. If ``role_name`` and/or ``group_name`` are provided, the role/group
+It will look for an entity called ``entity_name`` to fill a slot ``slot_name``.
+If ``intent_name`` is ``None``, the slot will be filled regardless of intent name.
+Otherwise, the slot will only be filled if the user's intent is ``intent_name``. 
+
+If ``role_name`` and/or ``group_name`` are provided, the role/group
 label of the entity also needs to match the given values. The slot mapping will not
 apply if the intent of the message is ``excluded_intent``. Note that you can
 also define lists of intents for the parameters ``intent`` and ``not_intent``.
@@ -139,10 +140,11 @@ from_text
 ^^^^^^^^^
 
 The ``from_text`` mapping will use the text of the next user utterance to fill the slot
-``slot_name`` regardless of user intent if ``intent_name`` is ``None`` else only if
-user intent is ``intent_name``. The slot mapping will not
-apply if the intent of the message is ``excluded_intent``. Note that you can
-also define lists of intents for the parameters ``intent`` and ``not_intent``.
+``slot_name``. If ``intent_name`` is ``None``, the slot will be filled regardless of intent name.
+Otherwise, the slot will only be filled if the user's intent is ``intent_name``. 
+
+The slot mapping will not apply if the intent of the message is ``excluded_intent``. 
+Note that you can define lists of intents for the parameters ``intent`` and ``not_intent``.
 
 .. code-block:: yaml
 
@@ -164,7 +166,7 @@ also define lists of intents for the parameters ``intent`` and ``not_intent``.
 .. note::
 
     The slot mapping will not apply during the initial activation of the form. To fill
-    a slot based on the intent which activated the form use the ``from_trigger_intent``
+    a slot based on the intent that activated the form, use the ``from_trigger_intent``
     mapping
 
 .. code-block:: yaml
@@ -201,10 +203,10 @@ also define lists of intents for the parameters ``intent`` and ``not_intent``.
 Writing Stories / Rules for Unhappy Form Paths
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Your users will not always respond with the information you ask of them.
+Your users will not always respond with the information you ask from them.
 Typically, users will ask questions, make chitchat, change their mind, or otherwise
 stray from the happy path. The way this works with forms is that a form will raise
-an ``ActionExecutionRejection`` if the user didn't provide the requested information.
+an ``ActionExecutionRejection`` if the user doesn't provide the requested information.
 You need to handle events that might cause ``ActionExecutionRejection`` errors
 with rules or stories. For example, if you expect your users to chitchat with your bot,
 you could add a story like this:
@@ -212,10 +214,10 @@ you could add a story like this:
 .. code-block:: yaml
 
     - rule: Example of an unhappy path
-      steps:
+      condition:
       # Condition that form is active.
       - form: your_form
-      - ...
+      steps:
       # This unhappy path handles the case of an intent `chitchat`.
       - intent: chitchat
       - action: utter_chitchat
@@ -226,17 +228,17 @@ you could add a story like this:
 In some situations, users may change their mind in the middle of the form action
 and decide not to go forward with their initial request. In cases like this, the
 assistant should stop asking for the requested slots. You can handle such situations
-gracefully using a default action ``action_deactivate_form`` which will deactivate
+gracefully using a default action ``action_deactivate_form``, which will deactivate
 the form and reset the requested slot. An example story of such conversation could
 look as follows:
 
 .. code-block:: yaml
 
     - rule: Example of an unhappy path
-      steps:
+      condition:
       # Condition that form is active.
       - form: your_form
-      - ...
+      steps:
       - intent: stop
       - action: utter_ask_continue
       - intent: stop
@@ -260,8 +262,8 @@ After extracting a slot value from user input, you can validate the extracted sl
 By default Rasa Open Source only validates if any slot was filled after requesting
 a slot. If nothing is extracted from the user’s utterance for any of the required slots,
 an ``ActionExecutionRejection`` error will be raised, meaning the action execution was
-rejected and therefore Rasa Open Source will fall back onto a different policy to
-predict another action.
+rejected and Rasa Open Source will fall back to a different policy to
+predict the next action.
 
 You can implement a :ref:`custom action<custom-actions>` ``validate_{form_name}``
 to validate any extracted slots. Make sure to add this action to the ``actions``
@@ -273,7 +275,7 @@ section of your domain:
   - ... # other actions
   - validate_your_form
 
-When the form is executed it will run your custom action. In your custom action
+When the form is executed, it will run your custom action. In your custom action
 you can either
 
 - validate already extracted slots. You can retrieve them from the tracker by running
@@ -281,7 +283,7 @@ you can either
 - use :ref:`forms-custom-slot-mappings` to extract slot values .
 
 After validating the extracted slots, return ``SlotSet`` events for them. If you want
-to mark a slot as invalid return a ``SlotSet`` event which sets the value to ``None``.
+to mark a slot as invalid, return a ``SlotSet`` event that sets the value to ``None``.
 Note that if you don't return a ``SlotSet`` for an extracted slot, Rasa Open Source
 will assume that the value is valid.
 
@@ -364,7 +366,7 @@ a slot based on the length of the last user message.
 Requesting Extra Slots
 ~~~~~~~~~~~~~~~~~~~~~~
 
-If you have frequent changes to the required slots and don't want to retrain your
+If you make frequent changes to the required slots and don't want to retrain your
 assistant when your form changes, you can also use a
 :ref:`custom action<custom-actions>` ``validate_{form_name}`` to define
 which slots should be requested. Rasa Open Source will run your custom action whenever
@@ -410,8 +412,8 @@ The requested_slot slot
 The slot ``requested_slot`` is automatically added to the domain as an
 unfeaturized slot. If you want to make it featurized, you need to add it
 to your domain file as a categorical slot. You might want to do this if you
-want to handle your unhappy paths differently depending on what slot is
-currently being asked from the user. For example, say your users respond
+want to handle your unhappy paths differently, depending on what slot is
+currently being asked from the user. For example, if your users respond
 to one of the bot's questions with another question, like *why do you need to know that?*
 The response to this ``explain`` intent depends on where we are in the story.
 In the restaurant case, your stories would look something like this:
@@ -450,9 +452,9 @@ on how to use interactive learning with forms.
 Using a Custom Action to Ask For the Next Slot
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As soon as the form determined which slot has to be filled next by the user, it will
+As soon as the form determines which slot has to be filled next by the user, it will
 execute the action ``utter_ask_{slot_name}`` to ask the user to provide the necessary
-input. If a regular utterance is not enough, you can also provide a custom action
+information. If a regular utterance is not enough, you can also use a custom action
 ``action_ask_{slot_name}`` to ask for the next slot.
 
 .. code-block:: python
@@ -478,7 +480,8 @@ input. If a regular utterance is not enough, you can also provide a custom actio
 Debugging
 ---------
 
-The first thing to try is to run your bot with the ``--debug`` flag, see :ref:`command-line-interface` for details.
+The first thing to try is running your bot with the ``--debug`` flag, 
+see :ref:`command-line-interface` for details.
 If you are just getting started, you probably only have a few hand-written stories.
 This is a great starting point, but
 you should give your bot to people to test **as soon as possible**. One of the guiding principles
