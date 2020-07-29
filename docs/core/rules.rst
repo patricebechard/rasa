@@ -11,11 +11,11 @@ Rules
 .. contents::
    :local:
 
-Rasa rules are a form of training data used to train Rasa's dialogue management models.
-Rules describe parts of conversations which should always follow the same path.
+Rasa rules are a type of training data used to train Rasa's dialogue management models.
+Rules describe parts of conversations that should always follow the same path.
 Useful applications for rules are for example:
 
-* **FAQs**: FAQs are questions which users ask independent of the current context.
+* **FAQs**: FAQs are questions that users ask independent of the current context.
   Rules are an easy way to specify fixed answers to these questions.
 
 * :ref:`fallback-actions`: Users might confront your assistant with unexpected messages.
@@ -24,11 +24,11 @@ Useful applications for rules are for example:
   messages with low NLU confidence like an FAQ.
 
 * :ref:`forms`: It's a common use case for assistants to collect form-like
-  data from the user. Both, activation of forms as well as handling of unexpected
-  events as part of a form, are often following fixed paths.
+  data from the user. Both activation of forms and handling of unexpected
+  events as part of a form will often follow fixed paths.
 
-**Don't overuse rules**. They are great to handle small specific conversation parts but
-unlike :ref:`stories` rules don't have the power to generalize to unseen conversation
+**Don't overuse rules**. Rules are great to handle small specific conversation parts but
+unlike :ref:`stories`, rules don't have the power to generalize on unseen conversation
 paths. Combine rules and stories to make your assistant robust and able to handle
 real user behavior.
 
@@ -48,6 +48,7 @@ Rules can then be added to the ``rules`` section of your training data.
 
 Rules for the Conversation Start
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## This will need to be changed, TBD. 
 
 To write a rule which only applies at the beginning of a conversation, start with the
 intent which starts the conversation and then add the actions which your assistant
@@ -67,9 +68,9 @@ should perform in response to that.
 Rules which Apply Anytime
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To indicate that a rule can apply at any point in a conversation, specify ``...`` as
-first conversation step. The ``...`` indicate that the rule applies independent of the
-previous conversation.
+To indicate that a rule can apply at any point in a conversation, start with the
+intent which starts the conversation and then add the actions which your assistant
+should perform in response to that.
 
 .. code-block:: yaml
 
@@ -77,7 +78,6 @@ previous conversation.
 
     - rule: Say `hello` whenever the user sends a message with intent `greet`
       steps:
-      - ...
       - intent: greet
       - action: utter_greet
 
@@ -88,25 +88,26 @@ Rules with Pre-Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Rules can describe requirements which have to be fulfilled for the rule to be
-applicable. To do so, add any information about the prior conversation, before the
-``...``:
+applicable. To do so, add any information about the prior conversation under
+``condition:``. 
 
 .. code-block:: yaml
 
     rules:
 
     - rule: Only say `hello` when the user provided a name
-      steps:
+      condition: 
       - slot: user_provided_name
         value: true
-      - ...
+      steps:
       - intent: greet
       - action: utter_greet
 
 Not Predicting `action_listen` at the End of a Rule
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Rules default to wait for the next user message when they finished their last step:
+By default, rules will wait for the next user message when finished with 
+the last step:
 
 .. code-block:: yaml
 
@@ -167,7 +168,6 @@ greets the assistant.
 
     - rule: Say `hello` whenever the user sends a message with intent `greet`
       steps:
-      - ...
       - intent: greet
       - action: utter_greet
 
