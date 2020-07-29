@@ -80,7 +80,7 @@ Glossary
 
     :ref:`rules`
         Special training data to specify rule-like behavior of the assistant, such as
-        answering to FAQs, filling :ref:`forms`, or handling
+        answering FAQs, filling :ref:`forms`, or handling
         :ref:`fallbacks<fallback-actions>`.
 
     :ref:`Slot <slots>`
