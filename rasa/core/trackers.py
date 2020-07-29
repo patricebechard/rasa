@@ -147,7 +147,7 @@ class DialogueStateTracker:
         self._paused = False
         # A deterministically scheduled action to be executed next
         self.followup_action = ACTION_LISTEN_NAME
-        self.latest_action_name = None
+        self.latest_action = None
         # Stores the most recent message sent by the user
         self.latest_message = None
         self.latest_bot_utterance = None
@@ -185,7 +185,7 @@ class DialogueStateTracker:
             "events": evts,
             "latest_input_channel": self.get_latest_input_channel(),
             "active_form": self.active_form,
-            "latest_action_name": self.latest_action_name,
+            "latest_action": self.latest_action,
         }
 
     def past_states(self, domain) -> deque:
@@ -215,15 +215,16 @@ class DialogueStateTracker:
         if action_name == self.active_form.get("name"):
             self.active_form["rejected"] = True
 
-    def set_latest_action_name(self, action_name: Text) -> None:
+    def set_latest_action(self, action: Dict[Text, Text]) -> None:
         """Set latest action name
             and reset form validation and rejection parameters
         """
-        self.latest_action_name = action_name
+
+        self.latest_action = action
         if self.active_form.get("name"):
             # reset form validation if some form is active
             self.active_form["validate"] = True
-        if action_name == self.active_form.get("name"):
+        if action.get("action_name") == self.active_form.get("name"):
             # reset form rejection if it was predicted again
             self.active_form["rejected"] = False
 
@@ -373,7 +374,7 @@ class DialogueStateTracker:
             yield tracker
         elif (
             tracker.active_form.get("rejected")
-            or tracker.latest_action_name == ACTION_LISTEN_NAME
+            or tracker.latest_action.get("name") == ACTION_LISTEN_NAME
         ):
             # either a form was rejected or user uttered smth yield trackers
             yield from ignored_trackers
@@ -556,7 +557,7 @@ class DialogueStateTracker:
 
         self._reset_slots()
         self._paused = False
-        self.latest_action_name = None
+        self.latest_action = None
         self.latest_message = UserUttered.empty()
         self.latest_bot_utterance = BotUttered.empty()
         self.followup_action = ACTION_LISTEN_NAME
