@@ -12,34 +12,33 @@ Fallback Actions
    :local:
 
 Sometimes you want to revert to a fallback action, such as replying,
-`"Sorry, I didn't understand that"`. You can handle fallback cases by adding appropriate
+`"Sorry, I didn't understand that."` You can handle fallback cases by adding appropriate
 rules. Rasa Open Source comes with two default implementations for handling these
 fallbacks.
-In addition you can also use :ref:`custom-actions` to implement custom procedures.
+In addition, you can use :ref:`custom-actions` to run any custom code.
 
 Handling Low NLU Confidence
 ---------------------------
 
 Although Rasa's :ref:`intent-classifier` will generalize to unseen messages, some
-messages might still receive a low classification confidence.
-In order to handle messages which have low confidence, we recommend to add the
+messages might receive a low classification confidence.
+To handle messages with low confidence, we recommend adding the
 :ref:`fallback-classifier` to your NLU pipeline. The :ref:`fallback-classifier` will
-predict an intent ``nlu_fallback`` whenever no other intent prediction crosses
+predict an intent ``nlu_fallback`` when all other intent predictions fall below
 the configured confidence threshold.
 
 Writing Stories / Rules for Messages with Low Confidence
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When you added the :ref:`fallback-classifier` to your NLU pipeline, you can treat
-messages with low classification confidence just as any other intent. The following
-:ref:`rule<rules>` will ask the user to rephrase whenever they send a message which is
+When you add the :ref:`fallback-classifier` to your NLU pipeline, you can treat
+messages with low classification confidence as any other intent. The following
+:ref:`rule<rules>` will ask the user to rephrase when they send a message that is
 classified with low confidence:
 
 .. code-block:: yaml
 
     - rule: Ask the user to rephrase whenever they send a message with low NLU confidence
       steps:
-      - ...
       - intent: nlu_fallback
       - action: utter_please_rephrase
 
@@ -56,18 +55,18 @@ by trying to disambiguate the user input.
 Requirements
 ^^^^^^^^^^^^
 
-* Please add the :ref:`rule-policy` to your policy configuration before using the
+* Add the :ref:`rule-policy` to your policy configuration before using the
   ``Two-Stage-Fallback``
-* Before using the ``Two-Stage-Fallback`` you have to make sure to add the
+* Before using the ``Two-Stage-Fallback``, make sure to add the
   ``out_of_scope`` intent to your :ref:`domain<domains>`.
   When users send messages with
-  an intent ``out_of_scope`` during the fallback (e.g. by pressing a button),
+  the intent ``out_of_scope`` during the fallback (e.g. by pressing a button),
   Rasa Open Source will know that the users denied the given intent suggestions.
 
 Usage
 ^^^^^
 
-- If a NLU prediction has a low confidence score, the user is asked to affirm
+- If an NLU prediction has a low confidence score, the user is asked to affirm
   the classification of the intent.  (Default action:
   ``action_default_ask_affirmation``)
 
@@ -95,15 +94,15 @@ Usage
 
 Rasa Open Source provides default implementations for
 ``action_default_ask_affirmation`` and ``action_default_ask_rephrase``.
-The default implementation of ``action_default_ask_rephrase`` action utters
-the response ``utter_ask_rephrase``, so please make sure to specify this
+The default implementation of ``action_default_ask_rephrase`` utters
+the response ``utter_ask_rephrase``, so make sure to specify this
 response in your domain file.
 The implementation of both actions can be overwritten with
 :ref:`custom actions <custom-actions>`.
 
 To use the ``Two-Stage-Fallback`` for messages with low NLU confidence, add the
 following :ref:`rule<rules>` to your training data. This rule will make sure that the
-``Two-Stage-Fallback`` will be activated whenever the user send a message which receives
+``Two-Stage-Fallback`` will be activated whenever a message is received with
 low classification confidence.
 
 .. code-block:: yaml
@@ -112,7 +111,6 @@ low classification confidence.
 
     - rule: Implementation of the Two-Stage-Fallback
       steps:
-      - ...
       - intent: nlu_fallback
       - action: two_stage_fallback
       - form: two_stage_fallback
@@ -120,19 +118,19 @@ low classification confidence.
 Handling Low Core Confidence
 ----------------------------
 
-Similar as users might send unexpected messages,
-it is also possible that their behavior might lead them down unknown conversation paths.
+As users might send unexpected messages,
+it is possible that their behavior will lead them down unknown conversation paths.
 Rasa's machine learning policies such as the :ref:`ted_policy` are optimized to handle
 these unknown paths.
 
 To handle cases where even the machine learning policies can't predict the
-next action with confidence, make sure to add the :ref:`rule-policy` to your
+next action with high confidence, make sure to add the :ref:`rule-policy` to your
 policy configuration. The :ref:`rule-policy` will predict a default action if no
-:ref:`policy<policies>` has a prediction for the next
-action of the assistant which crosses a configurable threshold.
+:ref:`policy<policies>` has a next action prediction with confidence above a 
+configurable threshold.
 
-You can configure the action which is run in case low of Core confidence as well as
-the threshold for this as follows:
+You can configure the action that is run in case low of Core confidence as well as
+the corresponding confidence threshold as follows:
 
 .. code-block:: yaml
 
@@ -145,11 +143,11 @@ the threshold for this as follows:
       fallback_action_name: "action_default_fallback"
 
 
-``action_default_fallback`` is a default action in Rasa Open Source which sends the
+``action_default_fallback`` is a default action in Rasa Open Source that sends the
 ``utter_default`` response to the user. Make sure to specify
 the ``utter_default`` in your domain file. It will also revert back to the
 state of the conversation before the user message that caused the
-fallback, so that it will not influence the prediction of future actions.
+fallback, so it will not influence the prediction of future actions.
 You can take a look at the source of the action below:
 
 .. autoclass:: rasa.core.actions.action.ActionDefaultFallback
