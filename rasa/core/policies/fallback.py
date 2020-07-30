@@ -151,8 +151,8 @@ class FallbackPolicy(Policy):
         nlu_data = tracker.latest_message.parse_data
 
         if (
-            tracker.latest_action_name == self.fallback_action_name
-            and tracker.latest_action_name != ACTION_LISTEN_NAME
+            tracker.latest_action.get("action_name") == self.fallback_action_name
+            and tracker.latest_action.get("action_name") != ACTION_LISTEN_NAME
         ):
             logger.debug(
                 "Predicted 'action_listen' after fallback action '{}'".format(
@@ -163,7 +163,7 @@ class FallbackPolicy(Policy):
             idx = domain.index_for_action(ACTION_LISTEN_NAME)
             result[idx] = 1.0
 
-        elif self.should_nlu_fallback(nlu_data, tracker.latest_action_name):
+        elif self.should_nlu_fallback(nlu_data, tracker.latest_action.get("action_name")):
             result = self.fallback_scores(domain)
 
         else:

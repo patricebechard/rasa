@@ -151,7 +151,7 @@ class FormPolicy(MemoizationPolicy):
             logger.debug(
                 "There is an active form '{}'".format(tracker.active_form["name"])
             )
-            if tracker.latest_action_name == ACTION_LISTEN_NAME:
+            if tracker.latest_action.get("action_name")== ACTION_LISTEN_NAME:
                 # predict form action after user utterance
 
                 if tracker.active_form.get("rejected"):
@@ -162,7 +162,7 @@ class FormPolicy(MemoizationPolicy):
                 idx = domain.index_for_action(tracker.active_form["name"])
                 result[idx] = 1.0
 
-            elif tracker.latest_action_name == tracker.active_form.get("name"):
+            elif tracker.latest_action.get("action_name") == tracker.active_form.get("name"):
                 # predict action_listen after form action
                 idx = domain.index_for_action(ACTION_LISTEN_NAME)
                 result[idx] = 1.0
