@@ -11,6 +11,8 @@ from rasa.nlu.tokenizers.tokenizer import Token
 import rasa.utils.train_utils as train_utils
 import numpy as np
 
+from transformers import AutoModel, AutoTokenizer
+
 from rasa.nlu.constants import (
     TEXT,
     LANGUAGE_MODEL_DOCS,
@@ -59,33 +61,36 @@ class HFTransformersNLP(Component):
             model_tokenizer_dict,
         )
 
-        self.model_name = self.component_config["model_name"]
+        # self.model_name = self.component_config["model_name"]
 
-        if self.model_name not in model_class_dict:
-            raise KeyError(
-                f"'{self.model_name}' not a valid model name. Choose from "
-                f"{str(list(model_class_dict.keys()))}or create"
-                f"a new class inheriting from this class to support your model."
-            )
+        # if self.model_name not in model_class_dict:
+        #     raise KeyError(
+        #         f"'{self.model_name}' not a valid model name. Choose from "
+        #         f"{str(list(model_class_dict.keys()))}or create"
+        #         f"a new class inheriting from this class to support your model."
+        #     )
 
         self.model_weights = self.component_config["model_weights"]
         self.cache_dir = self.component_config["cache_dir"]
 
-        if not self.model_weights:
-            logger.info(
-                f"Model weights not specified. Will choose default model weights: "
-                f"{model_weights_defaults[self.model_name]}"
-            )
-            self.model_weights = model_weights_defaults[self.model_name]
+        # if not self.model_weights:
+        #     logger.info(
+        #         f"Model weights not specified. Will choose default model weights: "
+        #         f"{model_weights_defaults[self.model_name]}"
+        #     )
+        #     self.model_weights = model_weights_defaults[self.model_name]
 
-        logger.debug(f"Loading Tokenizer and Model for {self.model_name}")
+        logger.debug(f"Loading Tokenizer and Model for {self.model_weights}")
 
-        self.tokenizer = model_tokenizer_dict[self.model_name].from_pretrained(
-            self.model_weights, cache_dir=self.cache_dir
-        )
-        self.model = model_class_dict[self.model_name].from_pretrained(
-            self.model_weights, cache_dir=self.cache_dir
-        )
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_weights, cache_dir=self.cache_dir)
+        self.model = AutoModel.from_pretrained(self.model_weights, cache_dir=self.cache_dir)
+
+        # self.tokenizer = model_tokenizer_dict[self.model_name].from_pretrained(
+        #     self.model_weights, cache_dir=self.cache_dir
+        # )
+        # self.model = model_class_dict[self.model_name].from_pretrained(
+        #     self.model_weights, cache_dir=self.cache_dir
+        # )
 
         # Use a universal pad token since all transformer architectures do not have a
         # consistent token. Instead of pad_token_id we use unk_token_id because
@@ -119,9 +124,11 @@ class HFTransformersNLP(Component):
             List of token ids and token strings.
 
         """
-        split_token_ids = self.tokenizer.encode(text, add_special_tokens=False)
+        split_token_ids = self.tokenizer.encode(text)
+        split_token_strings = self.tokenizer.tokenize(text)
 
-        split_token_strings = self.tokenizer.convert_ids_to_tokens(split_token_ids)
+        # split_token_ids = self.tokenizer.encode(text, add_special_tokens=False)
+        # split_token_strings = self.tokenizer.convert_ids_to_tokens(split_token_ids)
 
         return split_token_ids, split_token_strings
 
